@@ -83,15 +83,6 @@ int main() {
 
 void commandExecution(char *args[]){
 	int i=0;
-	while(args[i] != NULL){
-		if(*(args[i])=='>'){
-			freopen(args[i+1],"w",stdout);
-			(args[i])=NULL;
-			(args[i+1])=NULL;
-			break;
-		}
-		i++;
-	}
 					
 	execvp(args[0], args);
 	//printf("Errore: exec non riuscita!\n");
