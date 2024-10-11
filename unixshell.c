@@ -60,6 +60,7 @@ int main() {
 		}
 		else if(pid == 0){
 			if (bckgrnd==1){
+				//had to use a deamon process to prevent creation of Zombie processes
 				pid_t childpid=fork();
 
 				if(childpid == -1){
