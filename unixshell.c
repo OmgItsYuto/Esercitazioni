@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+
 void commandExecution(char **);
 
 int main() {
@@ -59,6 +60,7 @@ int main() {
 		}
 		else if(pid == 0){
 			if (bckgrnd==1){
+				//had to use a deamon process to prevent creation of Zombie processes
 				pid_t childpid=fork();
 
 				if(childpid == -1){
@@ -83,6 +85,15 @@ int main() {
 
 void commandExecution(char *args[]){
 	int i=0;
+	while(args[i] != NULL){
+		if(*(args[i])=='>'){
+			freopen(args[i+1],"w",stdout);
+			(args[i])=NULL;
+			(args[i+1])=NULL;
+			break;
+		}
+		i++;
+	}
 					
 	execvp(args[0], args);
 	//printf("Errore: exec non riuscita!\n");
