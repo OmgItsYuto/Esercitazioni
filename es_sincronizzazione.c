@@ -28,7 +28,7 @@ int main(){
         pid=fork();
 
         if(pid==0){
-            fun(a,10);
+            fun(a,100000);
             exit(0);
         }
     }
