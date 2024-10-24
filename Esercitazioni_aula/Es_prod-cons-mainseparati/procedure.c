@@ -12,6 +12,7 @@
 
 
 void produttore(int * p, int ds_sem) {
+	srand(time(NULL));
 
 	printf("produttore è fermo prima di wait\n");
 	Wait_Sem(ds_sem, SPAZIO_DISPONIBILE);
