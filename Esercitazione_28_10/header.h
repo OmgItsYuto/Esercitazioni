@@ -18,7 +18,7 @@ typedef struct{
 void Wait_Sem(int, int);
 void Signal_Sem (int, int);
 
-void produci_elemento(int semid,BufferCircolare* buf);
+void produci_elemento(int semid,BufferCircolare* buf,int* cnt);
 void consuma_elementi(int semid, BufferCircolare* buf);
 
 #endif

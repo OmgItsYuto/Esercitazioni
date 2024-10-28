@@ -13,26 +13,31 @@
 
 int main(){
 	pid_t pid_ex,pid;
-	int st,i,val;
+	int st,val;
 
 	//rand(time(NULL));
 
 	//creare le risorse IPC necessarie
 
-	//key_t chiaveshm = ftok(".",'k');
-	int ds_shm = shmget(IPC_PRIVATE,sizeof(BufferCircolare), IPC_CREAT|0664);
+	key_t chiaveshm = ftok(".",'k');
+	int ds_shm = shmget(chiaveshm,sizeof(BufferCircolare), IPC_CREAT|0664);
 	if(ds_shm<0) { perror("SHM errore"); exit(1); }
 
-	//key_t chiavesem = ftok(".",'s');
-	int ds_sem = semget(IPC_PRIVATE, 2, IPC_CREAT|0664);
+	key_t chiavesem = ftok(".",'s');
+	int ds_sem = semget(chiavesem, 2, IPC_CREAT|0664);
 	if(ds_sem<0) { perror("SEM errore"); exit(1); }
+
+	key_t chiavecnt = ftok(".",'l');
+	int ds_shm2 = shmget(chiavecnt,sizeof(int), IPC_CREAT|0664);
+	int *cnt = (int *) shmat(ds_shm2,NULL, 0);
+	*cnt=0;
 
 	semctl(ds_sem, SPAZIO_DISP, SETVAL, N);
 	semctl(ds_sem, NUM_MSG, SETVAL, 0);
 	semctl(ds_sem, MUTEX_P, SETVAL, 1);
 
 	//istanziare i processi
-	for(i = 0; i < N_PROC;i++){
+	for(int i = 0; i < N_PROC;i++){
 		pid = fork();
 		if(pid == 0){
 			if(i == 0){
@@ -51,7 +56,7 @@ int main(){
 
 	}
 	
-	for(i = 0; i < N_PROC ; i++){
+	for(int i = 0; i < N_PROC ; i++){
 		pid_ex = wait(&st);
 		printf("[MASTER] - Il processo %d ha terminato l'esecuzione\n",pid_ex);			
 	}

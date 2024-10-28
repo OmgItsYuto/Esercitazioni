@@ -70,12 +70,8 @@ void consuma_elementi(int sem, BufferCircolare *buf){
 		val[i]=buf->elementi[buf->coda];
 		buf->coda = (buf->coda + 1) % N;
 	}
-	Signal_Sem(sem,NUM_MSG);
-	Signal_Sem(sem,SPAZIO_DISP);
-	Signal_Sem(sem,SPAZIO_DISP);
-	Signal_Sem(sem,SPAZIO_DISP);
-	Signal_Sem(sem,SPAZIO_DISP);
-	Signal_Sem(sem,SPAZIO_DISP);
+
+	for(int i=0;i<N;i++)Signal_Sem(sem,SPAZIO_DISP);
 
 	printf("[Consumatore %d] consumo elementi\n",getpid());	
 	m = media(val);
@@ -84,16 +80,19 @@ void consuma_elementi(int sem, BufferCircolare *buf){
 }
 
 //Produzione
-void produci_elemento(int sem,BufferCircolare *buf){
+void produci_elemento(int sem,BufferCircolare *buf, int *cnt){
 	int val;
 
-	printf("Esecuzione produci_elemento");
 	Wait_Sem(sem,SPAZIO_DISP);
 	Wait_Sem(sem,MUTEX_P);
 	val =  (1+rand()%11);
 	buf->elementi[buf->testa]=val;
 	buf->testa = (buf->testa+1) % N;
 	Signal_Sem(sem,MUTEX_P);
+	
+	(*cnt)++;
+	
+	if(*cnt==5) Signal_Sem(sem,NUM_MSG);
 
-	printf("[Produttore %d] ho prodotto %d in posizione %d\n",getpid(),val,buf->testa);
+	printf("[Produttore %d] ho prodotto %d in posizione %d\n",getpid(),val,buf->testa-1);
 }
