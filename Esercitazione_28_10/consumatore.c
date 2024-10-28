@@ -21,7 +21,11 @@ int main(){
 	key_t chiavesem = ftok(".",'s');
 	int ds_sem = semget(chiavesem,2, 0);
 
-	//consuma_elementi(ds_sem,buf);
+	int i=0;
+	while(i<2){
+		consuma_elementi(ds_sem,buf);
+		i++;
+	}
 
 	return 0;
 }

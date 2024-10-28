@@ -75,8 +75,8 @@ void consuma_elementi(int sem, BufferCircolare *buf){
 
 	printf("[Consumatore %d] consumo elementi\n",getpid());	
 	m = media(val);
-	//double dev=sqrt(var(val,m));
-	//printf("[Consumatore %d] media %f, varianza %f\n",getpid(),m,dev);
+	double dev=sqrt(var(val,m));
+	printf("[Consumatore %d] media %f, varianza %f\n",getpid(),m,dev);
 }
 
 //Produzione
@@ -92,7 +92,10 @@ void produci_elemento(int sem,BufferCircolare *buf, int *cnt){
 	
 	(*cnt)++;
 	
-	if(*cnt==5) Signal_Sem(sem,NUM_MSG);
+	if(*cnt==5){
+		Signal_Sem(sem,NUM_MSG);
+		*cnt=0;
+	}
 
-	printf("[Produttore %d] ho prodotto %d in posizione %d\n",getpid(),val,buf->testa-1);
+	printf("[Produttore %d] ho prodotto %d in posizione %d\n",getpid(),val,buf->testa);
 }

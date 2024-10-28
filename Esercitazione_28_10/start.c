@@ -15,13 +15,15 @@ int main(){
 	pid_t pid_ex,pid;
 	int st,val;
 
-	//rand(time(NULL));
+	srand(time(NULL));
 
 	//creare le risorse IPC necessarie
 
 	key_t chiaveshm = ftok(".",'k');
 	int ds_shm = shmget(chiaveshm,sizeof(BufferCircolare), IPC_CREAT|0664);
 	if(ds_shm<0) { perror("SHM errore"); exit(1); }
+	BufferCircolare *buf = (BufferCircolare *) shmat(ds_shm, NULL, 0);
+	buf->testa=-1;
 
 	key_t chiavesem = ftok(".",'s');
 	int ds_sem = semget(chiavesem, 2, IPC_CREAT|0664);
@@ -60,5 +62,10 @@ int main(){
 		pid_ex = wait(&st);
 		printf("[MASTER] - Il processo %d ha terminato l'esecuzione\n",pid_ex);			
 	}
+
+	semctl(ds_sem,0,IPC_RMID);
+	shmctl(ds_shm,IPC_RMID,NULL);
+	shmctl(ds_shm2,IPC_RMID,NULL);
+
 	return 0;
 }

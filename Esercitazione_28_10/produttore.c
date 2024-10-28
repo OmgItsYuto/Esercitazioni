@@ -8,12 +8,15 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 #include "header.h"
 
 
 int main(){
 	printf("[PRODUTTORE] <%d> \n",getpid());
 
+	srand(time(NULL));
+	
 	key_t chiaveshm = ftok(".",'k');
 	int ds_shm = shmget(chiaveshm,sizeof(BufferCircolare), 0);
 	if(ds_shm<0) { perror("SHM errore"); exit(1); }
