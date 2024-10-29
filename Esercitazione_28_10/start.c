@@ -26,7 +26,7 @@ int main(){
 	buf->testa=-1;
 
 	key_t chiavesem = ftok(".",'s');
-	int ds_sem = semget(chiavesem, 2, IPC_CREAT|0664);
+	int ds_sem = semget(chiavesem, 3, IPC_CREAT|0664);
 	if(ds_sem<0) { perror("SEM errore"); exit(1); }
 
 	key_t chiavecnt = ftok(".",'l');
