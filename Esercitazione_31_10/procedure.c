@@ -39,6 +39,7 @@ void consuma(BufferCircolare* buf, int chiave, int semid){
 	int sem;
 	int value;
 	int index;
+	int val_sleep;
 
 	for(int i=0; i<3; i++){
 
@@ -56,6 +57,8 @@ void consuma(BufferCircolare* buf, int chiave, int semid){
 		printf("[Consumatore %d] consumo elemento in posizione %d\n",getpid(), index);	
 
 		value=buf->elementi[index].valore;
+		val_sleep =  (1+rand()%3);
+		sleep(val_sleep);
 
 		buf->stati[index]=LIBERO;
 
