@@ -8,8 +8,6 @@
 
 
 float* leggi_risultati(struct MonitorRisultati * ls) {
-
-	//completare lettore con monitor sig and wait
 	enter_monitor(&(ls->m));
 	printf("[%d] Lettura - ingresso monitor\n", getpid());
 
@@ -40,10 +38,7 @@ float* leggi_risultati(struct MonitorRisultati * ls) {
 	return risultati;
 }
 
-
 void inserisci_risultato(struct MonitorRisultati * ls, float valore, int operazione) {
-
-	// completare scrittore con monitor sig and wait
 	enter_monitor(&(ls->m));
 	
 	printf("[%d] Scrittura - ingresso monitor\n", getpid());
@@ -83,29 +78,25 @@ void calcolo(struct MonitorRisultati * ls, int operazione, int mailbox){
 	// inserisce il risultato nel monitor con la funzione inserisci_risultato
 	// effettua tutte le operazioni di cui sopra 2 volte
 
-
 	Messaggio m;
-	float op1,op2,risultato;
+	float op[2],risultato;
 
 	for(int i=0;i<2;i++){
 
-		if(msgrcv(mailbox,(void *)&m,sizeof(Messaggio)-sizeof(long),operazione,0)==-1){
-			perror("Errore receive");
-		}else op1=m.valore;
-			
-		if(msgrcv(mailbox,(void *)&m,sizeof(Messaggio)-sizeof(long),operazione,0)==-1){
-			perror("Errore receive");
-		}else op2=m.valore;
+		for(int j=0;j<2;j++){
+			if(msgrcv(mailbox,(void *)&m,sizeof(Messaggio)-sizeof(long),operazione,0)==-1){
+				perror("Errore receive");
+			}else op[j]=m.valore;
+		}
 
 		sleep(1);
 		
-		if(operazione==1) risultato=op1+op2;
-		else if(operazione==2) risultato=op1*op2;
-		else risultato=op1/op2; //so per certo che op2 non è pari a 0
+		if(operazione==1) risultato=op[0]+op[1];
+		else if(operazione==2) risultato=op[0]*op[1];
+		else risultato=op[0]/op[1]; //so per certo che op2 non è pari a 0
 
 		inserisci_risultato(ls,risultato,operazione);
 	}
-
 }
 
 void generazione(int operazione, int mailbox) {
@@ -130,7 +121,7 @@ void generazione(int operazione, int mailbox) {
 void printer(struct MonitorRisultati * ls) {
 	// già implementata, nulla da fare 
 	float* risultati; 
-	for (int i = 0 ; i < 2; i++) {
+	for (int i = 0 ; i < 2; i++) { //il gruppo di printer effettua N_PRINTERS*2 stampe, in questo caso (come da traccia) 6
 		sleep(2);
 		risultati = leggi_risultati(ls);
 		printf("[%d] Risultati 1: %f, 2: %f, 3: %f\n",getpid(), risultati[0], risultati[1], risultati[2]);
