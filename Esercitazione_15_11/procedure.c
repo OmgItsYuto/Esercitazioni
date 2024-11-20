@@ -23,7 +23,9 @@ float* leggi_risultati(struct MonitorRisultati * ls) {
 	// var di appoggio in cui inserire i risultati letti dal monitor
 	float* risultati = (float *)malloc(sizeof(float)*3);
 
-	risultati=ls->risultati;
+	for(int i=0;i<N_OPS;i++){
+		risultati[i]=ls->risultati[i];
+	}
 
 	enter_monitor(&(ls->m));
 	printf("[%d] Lettura - ingresso monitor\n", getpid());
@@ -125,5 +127,6 @@ void printer(struct MonitorRisultati * ls) {
 		sleep(2);
 		risultati = leggi_risultati(ls);
 		printf("[%d] Risultati 1: %f, 2: %f, 3: %f\n",getpid(), risultati[0], risultati[1], risultati[2]);
+		free(risultati);
 	}
 }
