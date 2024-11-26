@@ -6,7 +6,7 @@
 
 #define N_UTENTI 5
 #define N 10
-#define N_RICHIESTEPERUTENTE 3
+#define N_RICHIESTEPERUTENTE 5
 
 typedef struct{
     unsigned int posizione;

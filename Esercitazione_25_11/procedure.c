@@ -34,7 +34,7 @@ void utente(BufferCircolare *buf){
         buf->coda=(buf->coda+1)%N;
         buf->cnt++;
 
-        sleep(2);
+        sleep(1);
 
         signal_condition(&(buf->m),1);
 
@@ -61,7 +61,7 @@ void schedulatore(BufferCircolare *buf, pid_t *disco){
         
         richiesta r=buf->elementi[buf->testa];
 
-        //sleep(abs(r.posizione-pos_prece));
+        sleep(abs(r.posizione-pos_prece));
 
         printf("[%d] - Schedulatore: Scrivo il valore %d sul disco, in posizione %d\n",getpid(),r.processo,r.posizione);
         disco[r.posizione]=r.processo;
