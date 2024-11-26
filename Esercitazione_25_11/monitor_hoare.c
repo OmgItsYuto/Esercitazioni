@@ -1,4 +1,4 @@
-/*#include <sys/ipc.h>
+#include <sys/ipc.h>
 #include <sys/types.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
@@ -11,74 +11,28 @@ static void Signal_Sem (int,int);
 static int Queue_Sem (int,int); 
 
 void init_monitor(Monitor *m, int num_var){
+    int i;
     m->mutex=semget(IPC_PRIVATE,1,IPC_CREAT|0664);
     semctl(m->mutex,0,SETVAL,1);
 
     m->urgent_sem=semget(IPC_PRIVATE,1,IPC_CREAT|0664);
-    semctl(m->mutex,0,SETVAL,0);
+    semctl(m->urgent_sem,0,SETVAL,0);
 
     m->id_conds=semget(IPC_PRIVATE,num_var,IPC_CREAT|0664);
-    for(int i=0;i<num_var;i++)
+    for(i=0;i<num_var;i++)
         semctl(m->id_conds,i,SETVAL,0);
 
     m->id_shared=shmget(IPC_PRIVATE,(num_var+1)*sizeof(int),IPC_CREAT|0664);
-    m->cond_counts=(int *)shmat(m->id_shared,0,0);
+    m->cond_counts=(int*)(shmat(m->id_shared,0,0));
 
     m->num_var_cond=num_var;
     m->urgent_count=m->cond_counts+m->num_var_cond;
 
-    for(int i=0;i<num_var;i++)
+    for(i=0;i<num_var;i++)
         m->cond_counts[i]=0;
 
     *(m->urgent_count)=0;
 }
-
-void init_monitor (Monitor *M,int num_var){
-
-    int i;
-
-    //alloca e inizializza il mutex per l'accesso al monitor
-    M->mutex=semget(IPC_PRIVATE,1,IPC_CREAT|0664);
-
-    semctl(M->mutex,0,SETVAL,1);
-
-
-    //alloca e inizializza il semaforo per la coda urgent
-    M->urgent_sem=semget(IPC_PRIVATE,1,IPC_CREAT|0664);
-
-    semctl(M->urgent_sem,0,SETVAL,0);
-
-
-    //alloca e inizializza i semafori con cui realizzare le var.condition
-    M->id_conds=semget(IPC_PRIVATE,num_var,IPC_CREAT|0664);
-
-    for (i=0;i<num_var;i++)
-         semctl(M->id_conds,i,SETVAL,0);
-
-
-    //alloca un contatore per ogni var.condition, più un contatore per la coda urgent
-    M->id_shared=shmget(IPC_PRIVATE,(num_var+1)*sizeof(int),IPC_CREAT|0664);
-
-
-    //effettua l'attach all'array di contatori appena allocato
-    M->cond_counts=(int*) (shmat(M->id_shared,0,0));
-
-    M->num_var_cond = num_var;
-
-    M->urgent_count = M->cond_counts + M->num_var_cond;
-
-
-    //inizializza i contatori per le var.condition e per la coda urgent
-    for (i=0; i<num_var; i++)
-        M->cond_counts[i]=0;
-
-    *(M->urgent_count)=0;
-
-#ifdef DEBUG_
-    printf("Monitor inizializzato con %d condition variables. Buona Fortuna ! \n",num_var);
-#endif
-
-} 
 
 void enter_monitor(Monitor *m){
     Wait_Sem(m->mutex,0);
@@ -108,14 +62,14 @@ void wait_condition(Monitor *m, int num_var){
 }
 
 void signal_condition(Monitor *m,int num_var){
-    *(m->urgent_count)++;
+    (*(m->urgent_count))++;
 
     if(m->cond_counts[num_var]>0){
         Signal_Sem(m->id_conds,num_var);
         Wait_Sem(m->urgent_sem,0);
     }
     
-    *(m->urgent_count)--;
+    (*(m->urgent_count))--;
 }
 
 int queue_condition(Monitor * M, int id_var){
@@ -142,12 +96,12 @@ void Signal_Sem(int id_sem, int numsem){
 
 int Queue_Sem(int id_sem, int numsem){
     return (semctl(id_sem,numsem,GETNCNT,NULL));
-}*/
+}
 
 /*************************************Monitor*************************************************/
 // Implementazione di un Monitor 
 
-
+/*
 #include <sys/ipc.h>
 #include <sys/types.h>
 #include <sys/sem.h>
@@ -164,7 +118,7 @@ static void Signal_Sem (int,int);
 static int Queue_Sem (int,int);   //restituisce il num di processi in attesa su un semaforo
 
 
-/********************IMPLEMENTAZIONE DELLE PROCEDURE***********************/
+/********************IMPLEMENTAZIONE DELLE PROCEDURE**********************
 
 void init_monitor (Monitor *M,int num_var){
 
@@ -337,7 +291,7 @@ int queue_condition(Monitor * M, int id_var){
 
 
 /********************IMPLEMENTAZIONE DELLE PROCEDURE SEMAFORICHE***********************/
-
+/*
 void Wait_Sem(int id_sem, int numsem)     {
        struct sembuf sem_buf;
 
@@ -360,3 +314,4 @@ void Signal_Sem (int id_sem,int numsem)     {
        sem_buf.sem_op=1;
        semop(id_sem,&sem_buf,1);   //semaforo verde
 }
+*/

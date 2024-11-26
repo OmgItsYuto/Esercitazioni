@@ -21,6 +21,7 @@ void utente(BufferCircolare *buf){
 
         printf("[%d] - Utente: Accesso al monitor...\n",getpid());
         enter_monitor(&(buf->m));
+        printf("[%d] - Utente: Entrato nel monitor...\n",getpid());
 
         printf("[%d] - Utente: Il numero di elementi nel buffer è %d\n",getpid(),buf->cnt);
 
