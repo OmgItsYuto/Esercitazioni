@@ -54,11 +54,8 @@ int main(int argc, char *argv[])
 
 	srand(time(NULL));
 
-	printf("Riga 58\n");
-
 	// Istanziamo lo stack
 	Stack *stack=(Stack *)malloc(sizeof(Stack));
-	printf("Riga 62\n");
 
 	StackInit(stack,dimension);
 
