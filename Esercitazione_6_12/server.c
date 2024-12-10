@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "header.h"
+#include <pthread.h>
 
 typedef struct {
     int buffer[MAX_VALUES];
