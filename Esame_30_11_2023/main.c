@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "prodcons.h"
 
@@ -16,69 +17,87 @@ void * thread_conteggio(void *);
 
 int main() {
 
-    /* TBD: Creare un oggetto monitor di tipo "MonitorProdCons" */
+    pthread_t th_p[NUM_THREAD_PROD];
+    pthread_t th_c[NUM_THREAD_CONS];
+    pthread_t th_cnt;
 
-    init_monitor(/*TBD*/);
+    /* TBD: Creare un oggetto monitor di tipo "MonitorProdCons" */
+    MonitorProdCons *monitor=(MonitorProdCons *)malloc(sizeof(MonitorProdCons));
+    
+    init_monitor(monitor);
 
     for(int i=0; i<NUM_THREAD_PROD; i++) {
-
         /* TBD: Creare un thread produttore, fargli eseguire la funzione "thread_produttore" */
+        pthread_create(&th_p[i],NULL,thread_produttore,(void*)monitor);
     }
 
     for(int i=0; i<NUM_THREAD_CONS; i++) {
-
         /* TBD: Creare un thread consumatore, fargli eseguire la funzione "thread_consumatore" */
+        pthread_create(&th_c[i],NULL,thread_consumatore,(void*)monitor);
     }
 
 
     /* TBD: Creare un thread di "conteggio", fargli eseguire la funzione "thread_conteggio" */
+    pthread_create(&th_cnt,NULL,thread_conteggio,(void*)monitor);
 
 
     /* TBD: Attendere la terminazione dei thread */
+    for(int i=0; i<NUM_THREAD_PROD; i++) {
+        /* TBD: Creare un thread produttore, fargli eseguire la funzione "thread_produttore" */
+        pthread_join(th_p[i],NULL);
+    }
+    for(int i=0; i<NUM_THREAD_CONS; i++) {
+        /* TBD: Creare un thread produttore, fargli eseguire la funzione "thread_produttore" */
+        pthread_join(th_c[i],NULL);
+    }
 
-    remove_monitor(/* TBD */);
+    pthread_join(th_cnt,NULL);
 
     /* TBD: Deallocare l'oggetto monitor */
+    remove_monitor(monitor);
+    free(monitor);
+
+    pthread_exit(0);
 }
 
 void * thread_produttore(void * x) {
 
     /* TBD: Completare il passaggio dell'oggetto "MonitorProdCons" */
+    MonitorProdCons *p=(MonitorProdCons *)x;
 
     for(int i=0; i<NUM_PRODUZIONI; i++) {
 
         /* TBD: Completare la chiamata a produzione() */
-
         int val = rand() % 10;
-        produzione(/*TBD*/, val);
+        sleep(rand()%5);
+        produzione(p, val);
 
         printf("[PRODUTTORE] Ho prodotto: %d\n", val);
-
     }
 
-    return NULL;
+    pthread_exit(0);
 }
 
 void * thread_consumatore(void * x) {
 
     /* TBD: Completare il passaggio dell'oggetto "MonitorProdCons" */
+    MonitorProdCons *p=(MonitorProdCons *)x;
 
     for(int i=0; i<NUM_CONSUMAZIONI; i++) {
 
         /* TBD: Completare la chiamata a consumazione() */
-
-        int val = consumazione(/*TBD*/);
+        int val = consumazione(p);
 
         printf("[CONSUMATORE] Ho consumato: %d\n", val);
     }
 
-    return NULL;
+    pthread_exit(0);
 }
-
 
 void * thread_conteggio(void * x) {
 
     /* TBD: Completare il passaggio dell'oggetto "MonitorProdCons" */
+    MonitorProdCons *p=(MonitorProdCons *)x;
 
     int consumazioni_effettuate = 0;
 
@@ -102,8 +121,7 @@ void * thread_conteggio(void * x) {
         }
 
         /* TBD: Completare la chiamata ad "attendi_consumazioni()" */
-
-        int n = attendi_consumazioni(/* TBD */, conteggio);
+        int n = attendi_consumazioni(p, conteggio);
 
         consumazioni_effettuate += n;
 
@@ -112,5 +130,5 @@ void * thread_conteggio(void * x) {
         printf("[CONTEGGIO] Sono stati consumati in totale %d elementi\n", consumazioni_effettuate);
     }
 
-    return NULL;
+    pthread_exit(0);
 }

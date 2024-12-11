@@ -8,6 +8,9 @@
 typedef struct {
 
     int buffer[DIM];
+    int testa;
+    int coda;
+    int riemp;
 
     int conteggio_consumazioni;    /* conteggio consumazioni effettuate */
 
@@ -15,6 +18,12 @@ typedef struct {
             gestione del vettore di buffer circolare
             e per la sincronizzazione
      */
+
+    pthread_cond_t cond_ripresa;
+    pthread_cond_t cond_produzione;
+    pthread_cond_t cond_consumazione;
+
+    pthread_mutex_t mutex;
 
 } MonitorProdCons;
 
