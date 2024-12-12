@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <time.h>
 
 void inizializza_prod_cons(PriorityProdCons * p){
     init_monitor(&(p->m),3);
@@ -34,6 +35,7 @@ void produci_alta_prio(PriorityProdCons * p){
 }
 
 void produci_bassa_prio(PriorityProdCons * p){
+    srand(time(NULL)*getpid());
     int value;
     enter_monitor(&(p->m));
 
@@ -67,8 +69,8 @@ void consuma(PriorityProdCons * p){
     p->testa=(p->testa+1)%DIM;
     p->riemp--;
 
-    signal_condition(&(p->m),VAR_COND_PRODH);
-    signal_condition(&(p->m),VAR_COND_PRODL);
+    if(queue_condition(&(p->m),VAR_COND_PRODH)>0)signal_condition(&(p->m),VAR_COND_PRODH);
+    else signal_condition(&(p->m),VAR_COND_PRODL);
 
     leave_monitor(&(p->m));
 
