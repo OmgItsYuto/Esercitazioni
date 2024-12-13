@@ -8,7 +8,10 @@
     "stdio.h": "c",
     "stdlib.h": "c",
     "math.h": "c",
-    "header.h": "c"
+    "header.h": "c",
+    "time.h": "c",
+    "ipc.h": "c",
+    "msg.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
