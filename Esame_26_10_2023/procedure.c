@@ -88,6 +88,7 @@ char consumazione(MonitorIO * m) {
         i++;
 
     m->stato[i]=IN_USO;
+    m->num_occupati--;
    
     pthread_mutex_unlock(&(m->mutex));
 
@@ -99,7 +100,6 @@ char consumazione(MonitorIO * m) {
 
     pthread_mutex_lock(&(m->mutex));
     m->num_liberi++;
-    m->num_occupati--;
     pthread_mutex_unlock(&(m->mutex));
 
     /* TBD: Riattivare un thread produttore sospeso */
