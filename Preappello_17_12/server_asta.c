@@ -94,7 +94,7 @@ void* banditore(void* par){
     Parametri *p=(Parametri *)par;
     Asta *asta=(Asta *)p->asta;
     Max_Offerta *max_offerta=(Max_Offerta *)p->max_offerta;
-    int client_id=(int)p->client_id;
+    int client_id=p->client_id;
    
     int aggiudicata = 0;
     while(!aggiudicata) {
@@ -131,7 +131,7 @@ void* banditore(void* par){
 
             InizioScrittura(asta);
 
-            asta->offerte[off.id_cliente]=off.valore_offerto;
+            asta->offerte[client_id]=off.valore_offerto;
 
             FineScrittura(asta);
            
@@ -265,17 +265,18 @@ int main() {
         par_b->max_offerta=max_off;
 
         // e creazione thread
-        pthread_create(&banditore_t[client_id-1],NULL,banditore,(void *)par);
+        pthread_create(&banditore_t[client_id-1],NULL,banditore,(void *)par_b);
         printf("Thread banditore %d avviato\n",client_id);
     }
-    
-    // TODO join dei thread
-    for(int i=0;i<MAX_CLIENTI;i++)
-        pthread_join(banditore_t[i],NULL);
 
     pthread_join(agg_t,NULL);
     pthread_join(giudice_t,NULL);
-    
+
+    // TODO join dei thread
+    for(int i=0;i<MAX_CLIENTI;i++){
+        pthread_join(banditore_t[i],NULL);
+    }
+
     // e rimozione parametri, ecc.
     //rimozione asta
     pthread_mutex_destroy(&(asta->mutex));
